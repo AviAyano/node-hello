@@ -9,7 +9,7 @@ job('NodeJS Docker example') {
         scm('H/5 * * * *')
     }
     wrappers {
-        nodejs('Node 17.0.1') // this is the name of the NodeJS installation in 
+        nodejs('NodeJS 20.6.1') // this is the name of the NodeJS installation in 
                          // Manage Jenkins -> Configure Tools -> NodeJS Installations -> Name
     }
     steps {
