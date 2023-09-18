@@ -8,20 +8,19 @@ properties([
 node {
     def commit_id
     stage('Prepare') {
-        git 'https://github.com/AviAyano/node-hello.git'
-        sh "printenv" 
+        ///checkout scm
+	git "https://github.com/AviAyano/node-hello.git"
         sh "git rev-parse --short HEAD > .git/commit-id"
         commit_id = readFile('.git/commit-id')
-
+	///echo scm.branches[0].name
+	///echo env.BRANCH_NAME
     }
     stage('Compile') {
         sh 'npm install'
     }
     stage('docker Build') {
         docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-           docker.build("aviayano/jenkinspipeline").push("${commit_id}")
+           docker.build("nlitterat/compie").push("${commit_id}")
          }
     }
 }
-
-
