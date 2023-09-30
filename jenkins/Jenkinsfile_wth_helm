@@ -1,0 +1,29 @@
+#!/usr/bin/env groovy
+/* some comments */
+/*
+properties([
+	pipelineTriggers([cron('H/2 * * * *')])
+                ])
+*/
+node {
+    def commit_id
+    stage('Prepare') {
+        checkout scm
+        sh "git rev-parse --short HEAD > .git/commit-id"
+        commit_id = readFile('.git/commit-id')
+	echo scm.branches[0].name
+	echo env.BRANCH_NAME
+    }
+    stage('Compile') {
+        sh 'npm install'
+    }
+    stage('docker Build') {
+        docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
+           docker.build("nlitterat/compie").push("${commit_id}")
+         }
+    }
+    stage('deploy with helm') {
+        sh 'helm template deploy/helm/.'
+        sh "helm upgrade -i  node-hello  --set image.tag=\"${commit_id}\" deploy/helm/."
+    }
+}
